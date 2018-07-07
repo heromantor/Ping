@@ -32,6 +32,8 @@ class Ping {
   private $data = 'Ping';
   private $commandOutput;
 
+  private $count = 1;
+
   /**
    * Called when the Ping object is created.
    *
@@ -69,6 +71,14 @@ class Ping {
    */
   public function setTtl($ttl) {
     $this->ttl = $ttl;
+  }
+
+  public function setCount($count) {
+    $this->count = (int)$count;
+  }
+
+  public function getCount() {
+    return $this->count;
   }
 
   /**
@@ -219,21 +229,22 @@ class Ping {
     $ttl = escapeshellcmd($this->ttl);
     $timeout = escapeshellcmd($this->timeout);
     $host = escapeshellcmd($this->host);
+    $count = escapeshellcmd($this->count);
 
     // Exec string for Windows-based systems.
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
       // -n = number of pings; -i = ttl; -w = timeout (in milliseconds).
-      $exec_string = 'ping -n 1 -i ' . $ttl . ' -w ' . ($timeout * 1000) . ' ' . $host;
+      $exec_string = "ping -n $count -i " . $ttl . ' -w ' . ($timeout * 1000) . ' ' . $host;
     }
     // Exec string for Darwin based systems (OS X).
     else if(strtoupper(PHP_OS) === 'DARWIN') {
       // -n = numeric output; -c = number of pings; -m = ttl; -t = timeout.
-      $exec_string = 'ping -n -c 1 -m ' . $ttl . ' -t ' . $timeout . ' ' . $host;
+      $exec_string = "ping -n -c $count -m " . $ttl . ' -t ' . $timeout . ' ' . $host;
     }
     // Exec string for other UNIX-based systems (Linux).
     else {
       // -n = numeric output; -c = number of pings; -t = ttl; -W = timeout
-      $exec_string = 'ping -n -c 1 -t ' . $ttl . ' -W ' . $timeout . ' ' . $host . ' 2>&1';
+      $exec_string = "ping -n -c $count -t " . $ttl . ' -W ' . $timeout . ' ' . $host . ' 2>&1';
     }
 
     exec($exec_string, $output, $return);
