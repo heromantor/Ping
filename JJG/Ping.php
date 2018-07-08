@@ -191,12 +191,12 @@ class Ping {
    * @return mixed
    *   Latency as integer, in ms, if host is reachable or FALSE if host is down.
    */
-  public function ping($method = 'exec') {
+  public function ping($method = 'exec', &$output = '') {
     $latency = false;
 
     switch ($method) {
       case 'exec':
-        $latency = $this->pingExec();
+        $latency = $this->pingExec($output);
         break;
 
       case 'fsockopen':
@@ -223,7 +223,7 @@ class Ping {
    * @return int
    *   Latency, in ms.
    */
-  private function pingExec() {
+  private function pingExec(&$output) {
     $latency = false;
 
     $ttl = escapeshellcmd($this->ttl);
